@@ -10,8 +10,8 @@ registerBlockType(
         icon: 'megaphone',
         category: 'widgets',
         keywords: [ __( 'twitter', 'twitter-slider' ), __( 'slider', 'twitter-slider' ) ],
-        arguments: {
-            posts: {
+        attributes: {
+            tweets: {
                 type: 'array'
             },
             twitter_handle_name: {
@@ -19,7 +19,7 @@ registerBlockType(
                 default: ''
             }
         },
-        save: Save,
         edit: Edit,
+        save: Save,
     }
 );
