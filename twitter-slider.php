@@ -1,29 +1,22 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: rtcamp
- * Date: 19/2/18
- * Time: 2:52 PM
- */
-
-/**
  * Plugin Name: Twitter Slider Block For Gutenberg
  * Description: Display your up to 10 Tweets in Slider
  * Text Domain: twitter-slider
  */
 
-// For Direct Access
-if( ! defined( 'ABSPATH' ) ) {
+// For Direct Access.
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Check below function is alreact include or not
-if( ! function_exists( 'is plugin active' ) ) {
+// Check below function is alreact include or not.
+if ( ! function_exists( 'is plugin active' ) ) {
 	include_once ABSPATH . 'wp-admin/includes/plugin.php';
 }
 
-// check if gutenberg is activate or not
-if( ! is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
+// check if gutenberg is activate or not.
+if ( ! is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
 	exit;
 }
 
@@ -51,15 +44,22 @@ class Twitter_Slider {
 		wp_register_script(
 			'twitter-editor-script', plugins_url( 'js/block.build.js', __FILE__ )
 		);
+		wp_register_script(
+			'twitter-slider', plugins_url( 'js/slider.js', __FILE__ )
+		);
 		register_block_type(
 			'twitter-post/twitter',
-			array (
+			array(
 				'editor_style'  => 'twitter-editor-style',
 				'style'         => 'twitter-client-style',
 				'editor_script' => 'twitter-editor-script',
+				'script'        => [ 'jquery', 'twitter-slider' ],
 			)
 		);
+		wp_localize_script( 'twitter-editor-script', 'twitter_posts', array(
+			'URL' => plugin_dir_url( __FILE__ ),
+		) );
 	}
 }
-// Initilize the object
+// Initilize the object.
 $twitter_slider = new Twitter_Slider();

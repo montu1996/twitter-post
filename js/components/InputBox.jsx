@@ -1,7 +1,7 @@
 const React = require( 'react' );
 
 const { Button,
-    TextControl,
+    TextControl
 } = wp.components;
 const {Component} = wp.element;
 const  { __ } = wp.i18n;
@@ -29,7 +29,7 @@ class InputBox extends React.Component {
             <div className="tweeter-handle-div">
                 <div className="tweeter-handle-input">
                     <TextControl
-                        label={ this.props.label }
+                        label={this.props.label }
                         onChange={this.onChange}
                         value={this.state.searchValue}
                     />

@@ -1,0 +1,9 @@
+.tweeter-handle-div .blocks-base-control__label {
+    width: 100% !important;
+    display: block !important;
+}
+
+.twitter-handle-backgrounnd label,
+.twitter-handle-fontcolor label {
+    font-weight: bolder;
+}

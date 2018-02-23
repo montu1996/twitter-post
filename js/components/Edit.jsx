@@ -1,29 +1,23 @@
 import InputBox from './InputBox.jsx';
-const React = require( 'react' );
+import axios from 'axios';
 
-var Twitter = require('twitter');
+const React = require('react');
 
-const  { Editable,
+const { Editable,
     source: { attr, children },
     BlockControls,
     AlignmentToolbar,
     InspectorControls,
     MediaUpload,
-    RichText
+    RichText,
+    ColorPalette
 } = wp.blocks;
 const { Button,
     TextControl,
     withAPIData
 } = wp.components;
-const {Component} = wp.element;
-const  { __ } = wp.i18n;
-
-var client = new Twitter({
-    consumer_key: 'SYWZf4OBqoETc8hDH4qDENKRl',
-    consumer_secret: 'qS1sA9izlrtNcHoG0zFTWxEDwrYgELvR95NrJCJ09MQ4FKNu2E',
-    access_token_key: '1286536478-9qgExRuKPtzS5d4CQbz5D8o1cNXXDYKhbs6ULhC',
-    access_token_secret: 'cD0c6OSiwO7t3GLpWeiv5XbDZvCNsTpbCvgkB8UcXT5rv'
-});
+const { Component } = wp.element;
+const { __ } = wp.i18n;
 
 class Edit extends Component {
 
@@ -32,38 +26,106 @@ class Edit extends Component {
 
         this.state = { isTwitterHandleClick: false };
 
-        this.setTwitterHandle = this.setTwitterHandle.bind( this );
+        this.setTwitterHandle = this.setTwitterHandle.bind(this);
+        this.backgroundColorChange = this.backgroundColorChange.bind(this);
+        this.backgroundFontColorChange = this.backgroundFontColorChange.bind(this);
     }
 
-    setTwitterHandle( newHandleName ) {
-        var params = {screen_name: 'montu3366'};
-        client.get('statuses/user_timeline', params, function(error, tweets, response) {
-            console.log("CALL");
-            if ( !error ) {
-                console.log(tweets);
+    setTwitterHandle(newHandleName) {
+        this.props.setAttributes({ twitter_handle_name: newHandleName });
+        const props = this.props;
+        axios.get(twitter_posts.URL + 'tweets.php', {
+            params: {
+                screen_name: newHandleName,
+                count: 10
             }
-            else {
-                console.log(error);
-            }
+        }).then(function (result) {
+            // set state with retrieved tweet data
+            props.setAttributes({ tweets: result.data });
+            
         });
-        // this.props.setAttributes( { twitter_handle_name: newHandleName } );
+    }
+
+    backgroundColorChange(newColor) {
+        this.props.setAttributes({ background_color: newColor });
+    }
+
+    backgroundFontColorChange(newColor) {
+        this.props.setAttributes({ font_color: newColor });
     }
 
     render() {
-        const {attributes, focus} = this.props;
+        const { attributes, focus } = this.props;
         const InsCtrl = focus && (
             <InspectorControls key="controls">
                 <InputBox
-                    label='Enter the Twitter Handle Name'
+                    label='Twitter Handle Name'
                     onClick={this.setTwitterHandle}
                     buttonName='Get Tweets'
                     searchName={attributes.twitter_handle_name}
                 />
+                <br />
+                <div className={"twitter-handle-backgrounnd"}>
+                    <label>{"Select Background Color: "}</label>
+                    <br /><br />
+                    <ColorPalette
+                        onChange={this.backgroundColorChange}
+                    />
+                </div>
+                <br />
+                <div className={"twitter-handle-fontcolor"}>
+                    <label>{"Select Font Color: "}</label>
+                    <br /><br />
+                    <ColorPalette
+                        onChange={this.backgroundFontColorChange}
+                    />
+                </div>
             </InspectorControls>
         );
+        var styles = {
+            backgroundColor: attributes.background_color,
+        };
+        var textStyle = {
+            color: attributes.font_color,
+        };
+        var slider = '';
+        if (attributes.tweets && attributes.tweets.length !== 0) {
+            const tweets = attributes.tweets;
+            const listTweets = tweets.map((tweet) => {
+                return (
+                    <li class="slide">
+                        <div class="quoteContainer">
+                            <p class="quote-phrase" style={textStyle}>{ tweet.text }</p>
+                        </div>
+                    </li>
+                );
+            });
+            slider =
+                <div id="carousel">
+                    <div id="buttons">
+                        <a id={"prev"} href="#">{'<'}</a>
+                    </div>
+                    <div id="slides">
+                        <ul data-id={attributes.time_stamp}>
+                            {listTweets}
+                        </ul>
+                    </div>
+                    <div id="buttons">
+                        <a id={"next"} href="#">{'>'}</a>
+                    </div>
+                </div>
+        }
+        else if (attributes.twitter_handle_name != '' && attributes.tweets.length === 0) {
+            slider = 'No Tweets Found...';
+        }
+        else {
+            slider = 'Enter The Twitter Handle Name....';
+        }
         return [
             InsCtrl,
-            <h1>Hello World</h1>
+            <div style={styles} className={attributes.twitter_handle_name + "twitter-block"}>
+                {slider}
+            </div>
         ];
     }
 

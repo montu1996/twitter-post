@@ -10,13 +10,23 @@ registerBlockType(
         icon: 'megaphone',
         category: 'widgets',
         keywords: [ __( 'twitter', 'twitter-slider' ), __( 'slider', 'twitter-slider' ) ],
+        useOnce: true,
         attributes: {
             tweets: {
-                type: 'array'
+                type: 'array',
+                default: []
             },
             twitter_handle_name: {
                 type: 'string',
                 default: ''
+            },
+            background_color: {
+                type: 'string',
+                default: '#fffff'
+            },
+            font_color: {
+                type: 'string',
+                default: '#000'
             }
         },
         edit: Edit,
